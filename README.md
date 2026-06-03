@@ -158,8 +158,12 @@ All `/v1/*` routes require a valid `Authorization: Bearer <token>`.
 | `GET` | `/healthz` | Health check (unauthenticated) |
 | `GET` | `/v1/conversations` | List the user's conversations |
 | `POST` | `/v1/conversations` | Create a new conversation |
-| `GET` | `/v1/conversations/:id/messages` | Load a conversation's messages |
+| `GET` | `/v1/conversations/:id/messages` | Load messages (cursor-paginated: `?limit=50&before=<message_id>`) |
 | `POST` | `/v1/conversations/:id/messages` | Send a message, stream the reply |
+
+Paginated reads return a `{ data, next_cursor, has_more }` envelope. Without a
+cursor the most recent page is returned; pass `next_cursor` back as `before` to
+load the next older page.
 
 ## Deployment
 
