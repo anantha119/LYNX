@@ -24,7 +24,7 @@ Hono API that streams responses from Google's Gemini models, verifies users with
 Auth0, and persists every conversation to PostgreSQL. The backend is containerized
 and runs on Google Cloud Run.
 
-The design favors a **boring, durable core**: managed Postgres, a modular monolith,
+The design: managed Postgres, a modular monolith,
 and complexity deferred until a measurement demands it.
 
 ## Features
