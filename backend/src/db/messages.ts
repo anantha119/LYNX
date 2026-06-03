@@ -1,0 +1,150 @@
+import { ulid } from "ulid";
+import { pool, query } from "./pool.js";
+
+export type Role = "user" | "assistant" | "system" | "tool";
+
+export type MessageRow = {
+  id: string;
+  role: Role;
+  content: { type: string; text?: string }[];
+  status: string;
+  created_at: string;
+};
+
+/** Wrap a plain string as the JSONB array-of-parts the schema requires. */
+function textContent(text: string) {
+  return JSON.stringify([{ type: "text", text }]);
+}
+
+/**
+ * Insert a message and, in the SAME transaction, bump the conversation's
+ * counters and advance its active_leaf_id. Keeping these together means the
+ * denormalized counters can never drift from the actual rows.
+ * Returns the new message's ULID.
+ */
+async function appendMessage(opts: {
+  conversationId: string;
+  parentId: string | null;
+  role: Role;
+  text: string;
+  status: "streaming" | "complete";
+  model?: string | null;
+  tokenCount?: number | null;
+}): Promise<string> {
+  const id = ulid();
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      `INSERT INTO messages (id, conversation_id, parent_id, role, content, status, model, token_count)
+       VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8)`,
+      [
+        id,
+        opts.conversationId,
+        opts.parentId,
+        opts.role,
+        textContent(opts.text),
+        opts.status,
+        opts.model ?? null,
+        opts.tokenCount ?? null,
+      ]
+    );
+    await client.query(
+      `UPDATE conversations
+       SET message_count = message_count + 1,
+           last_message_at = now(),
+           updated_at = now(),
+           active_leaf_id = $2
+       WHERE id = $1`,
+      [opts.conversationId, id]
+    );
+    await client.query("COMMIT");
+    return id;
+  } catch (e) {
+    await client.query("ROLLBACK");
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+/** Persist a completed user message. Returns its id (the new active leaf). */
+export function insertUserMessage(
+  conversationId: string,
+  parentId: string | null,
+  text: string
+): Promise<string> {
+  return appendMessage({
+    conversationId,
+    parentId,
+    role: "user",
+    text,
+    status: "complete",
+  });
+}
+
+/**
+ * Create the assistant message row up front with status 'streaming' and empty
+ * text, so a durable row exists from the moment streaming begins.
+ * Returns its id.
+ */
+export function insertAssistantPlaceholder(
+  conversationId: string,
+  parentId: string | null,
+  model: string
+): Promise<string> {
+  return appendMessage({
+    conversationId,
+    parentId,
+    role: "assistant",
+    text: "",
+    status: "streaming",
+    model,
+  });
+}
+
+/** Finalize the assistant row once streaming completes. */
+export async function finalizeAssistantMessage(
+  id: string,
+  fullText: string,
+  tokenCount: number | null = null
+): Promise<void> {
+  await query(
+    `UPDATE messages
+     SET content = $2::jsonb, status = 'complete', token_count = $3
+     WHERE id = $1`,
+    [id, textContent(fullText), tokenCount]
+  );
+}
+
+/** Mark a streaming assistant row as errored (provider failure / disconnect). */
+export async function markMessageError(id: string, partialText = ""): Promise<void> {
+  await query(
+    `UPDATE messages SET content = $2::jsonb, status = 'error' WHERE id = $1`,
+    [id, textContent(partialText)]
+  );
+}
+
+/**
+ * Load a conversation's messages oldest-first for display.
+ * Linear thread only (no branching yet); excludes soft-deleted rows.
+ */
+export async function getMessages(conversationId: string): Promise<MessageRow[]> {
+  const r = await query<MessageRow>(
+    `SELECT id, role, content, status, created_at
+     FROM messages
+     WHERE conversation_id = $1 AND deleted_at IS NULL
+     ORDER BY id ASC`,
+    [conversationId]
+  );
+  return r.rows;
+}
+
+/** The id of the current leaf message, used as parent_id for the next message. */
+export async function getActiveLeafId(conversationId: string): Promise<string | null> {
+  const r = await query<{ active_leaf_id: string | null }>(
+    `SELECT active_leaf_id FROM conversations WHERE id = $1`,
+    [conversationId]
+  );
+  return r.rows[0]?.active_leaf_id ?? null;
+}
