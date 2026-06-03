@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -20,6 +20,12 @@ export type Message = {
 
 interface ChatMessagesProps {
   messages: Message[];
+  /** Fetch the next older page (called when the user scrolls near the top) */
+  onLoadOlder?: () => void;
+  /** Whether an older page exists to load */
+  hasMore?: boolean;
+  /** Whether an older page is currently being fetched */
+  loadingOlder?: boolean;
 }
 
 function formatTime(date: Date) {
@@ -158,15 +164,63 @@ function MarkdownContent({ content, streaming }: { content: string; streaming?: 
 }
 
 /* ─── Message list ───────────────────────────────────────────────────────── */
-export function ChatMessages({ messages }: ChatMessagesProps) {
+export function ChatMessages({
+  messages,
+  onLoadOlder,
+  hasMore,
+  loadingOlder,
+}: ChatMessagesProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // Anchoring state for prepending older messages without the view jumping.
+  const pendingPrependRef = useRef(false);
+  const heightBeforeRef = useRef(0);
+  const scrollTopBeforeRef = useRef(0);
+  const firstPaintRef = useRef(true);
+
+  // After the message list changes, adjust scroll:
+  //  - prepend (older history loaded): restore the prior visual position
+  //  - first paint (conversation just opened): jump to the bottom instantly
+  //  - otherwise (send / streaming): smoothly follow the bottom
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (pendingPrependRef.current) {
+      el.scrollTop =
+        el.scrollHeight - heightBeforeRef.current + scrollTopBeforeRef.current;
+      pendingPrependRef.current = false;
+    } else if (firstPaintRef.current) {
+      el.scrollTop = el.scrollHeight; // instant — no visible scroll on open
+      firstPaintRef.current = false;
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
+  const handleScroll = () => {
+    const el = containerRef.current;
+    if (!el || !onLoadOlder) return;
+    if (el.scrollTop <= 80 && hasMore && !loadingOlder && !pendingPrependRef.current) {
+      // Capture dimensions before the prepend so we can restore position after.
+      heightBeforeRef.current = el.scrollHeight;
+      scrollTopBeforeRef.current = el.scrollTop;
+      pendingPrependRef.current = true;
+      onLoadOlder();
+    }
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 space-y-6">
+    <div
+      ref={containerRef}
+      onScroll={handleScroll}
+      className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 space-y-6"
+    >
+      {loadingOlder && (
+        <div className="text-center text-[10px] font-mono text-stone-600 py-2">
+          Loading earlier messages…
+        </div>
+      )}
       {messages.map((msg, i) => (
         <div
           key={msg.id}

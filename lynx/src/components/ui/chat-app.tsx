@@ -13,6 +13,9 @@ import { MenuIcon, LogOut } from "lucide-react";
 // The fallback keeps local dev working with no .env.local change.
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+// Messages fetched per page (initial open + each scroll-up load).
+const PAGE_SIZE = 50;
+
 /* ─── Backend shapes ─────────────────────────────────────────────────────── */
 type ServerConversation = {
   id: string;
@@ -60,10 +63,27 @@ async function apiListConversations(token: string): Promise<Conversation[]> {
   return (data.data as ServerConversation[]).map(toConversation);
 }
 
-async function apiGetMessages(id: string, token: string): Promise<Message[]> {
-  const res = await fetch(`${API}/v1/conversations/${id}/messages`, { headers: authHeaders(token) });
+type MessagePage = {
+  messages: Message[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+async function apiGetMessages(
+  id: string,
+  token: string,
+  before?: string
+): Promise<MessagePage> {
+  const url = new URL(`${API}/v1/conversations/${id}/messages`);
+  url.searchParams.set("limit", String(PAGE_SIZE));
+  if (before) url.searchParams.set("before", before);
+  const res = await fetch(url, { headers: authHeaders(token) });
   const data = await res.json();
-  return (data.data as ServerMessage[]).map(toMessage);
+  return {
+    messages: (data.data as ServerMessage[]).map(toMessage),
+    nextCursor: (data.next_cursor as string | null) ?? null,
+    hasMore: Boolean(data.has_more),
+  };
 }
 
 async function apiCreateConversation(token: string): Promise<Conversation> {
@@ -109,6 +129,10 @@ export function ChatApp() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ConversationMessages>({});
+  const [pageInfo, setPageInfo] = useState<
+    Record<string, { nextCursor: string | null; hasMore: boolean }>
+  >({});
+  const [loadingOlderId, setLoadingOlderId] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   /* ── Fetch access token once on mount ───────────────────────────────── */
@@ -220,14 +244,46 @@ export function ChatApp() {
     (id: string) => {
       setActiveId(id);
       setMobileOpen(false);
-      // Fetch messages the first time a conversation is opened.
+      // Fetch the first (most recent) page the first time a conversation is opened.
       if (!messages[id]) {
         apiGetMessages(id, accessToken)
-          .then((msgs) => setMessages((prev) => ({ ...prev, [id]: msgs })))
+          .then(({ messages: msgs, nextCursor, hasMore }) => {
+            setMessages((prev) => ({ ...prev, [id]: msgs }));
+            setPageInfo((prev) => ({ ...prev, [id]: { nextCursor, hasMore } }));
+          })
           .catch((err) => console.error("failed to load messages:", err));
       }
     },
     [messages, accessToken]
+  );
+
+  /* ── Load older messages (cursor pagination, scroll-up) ──────────────── */
+  const handleLoadOlder = useCallback(
+    async (convId: string) => {
+      const info = pageInfo[convId];
+      if (!info?.hasMore || !info.nextCursor) return;
+      if (loadingOlderId === convId) return;
+
+      setLoadingOlderId(convId);
+      try {
+        const { messages: older, nextCursor, hasMore } = await apiGetMessages(
+          convId,
+          accessToken,
+          info.nextCursor
+        );
+        // Older messages are oldest-first; prepend them ahead of the current page.
+        setMessages((prev) => ({
+          ...prev,
+          [convId]: [...older, ...(prev[convId] ?? [])],
+        }));
+        setPageInfo((prev) => ({ ...prev, [convId]: { nextCursor, hasMore } }));
+      } catch (err) {
+        console.error("failed to load older messages:", err);
+      } finally {
+        setLoadingOlderId(null);
+      }
+    },
+    [pageInfo, loadingOlderId, accessToken]
   );
 
   /* ── Render ──────────────────────────────────────────────────────────── */
@@ -322,7 +378,13 @@ export function ChatApp() {
         <div className="flex-1 flex flex-col min-h-0 relative z-10">
           {activeId && activeMessages.length > 0 ? (
             <>
-              <ChatMessages messages={activeMessages} />
+              <ChatMessages
+                key={activeId}
+                messages={activeMessages}
+                hasMore={pageInfo[activeId]?.hasMore ?? false}
+                loadingOlder={loadingOlderId === activeId}
+                onLoadOlder={() => handleLoadOlder(activeId)}
+              />
               <div className="flex-shrink-0 border-t border-stone-900/80 bg-[#080808]">
                 <VercelV0Chat
                   onSend={handleSend}
