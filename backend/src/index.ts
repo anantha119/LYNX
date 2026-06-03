@@ -19,6 +19,7 @@ import {
   finalizeAssistantMessage,
   markMessageError,
   getMessages,
+  getMessagesPage,
   getActiveLeafId,
 } from "./db/messages.js";
 
@@ -58,15 +59,29 @@ app.post("/v1/conversations", async (c) => {
 });
 
 /* ── GET /v1/conversations/:id/messages ──────────────────────────────────────
-   Returns a conversation's messages, oldest first.
+   Cursor-paginated, oldest-first within the page.
+   Query: ?limit=50&before=<message_id>
+     - no cursor → the most recent `limit` messages
+     - before=<ulid> → the page of messages older than that cursor
+   Returns: { data, next_cursor, has_more }. Pass next_cursor back as `before`
+   to load the next older page.
 ─────────────────────────────────────────────────────────────────────────── */
 app.get("/v1/conversations/:id/messages", async (c) => {
   const userId = c.get("userId");
   const id = c.req.param("id");
   const conv = await getConversation(userId, id);
   if (!conv) return c.json({ error: "not found" }, 404);
-  const rows = await getMessages(id);
-  return c.json({ data: rows });
+
+  const before = c.req.query("before") ?? null;
+  const limitParam = Number(c.req.query("limit"));
+  const limit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : undefined;
+
+  const page = await getMessagesPage(id, { before, limit });
+  return c.json({
+    data: page.data,
+    next_cursor: page.nextCursor,
+    has_more: page.hasMore,
+  });
 });
 
 /* ── POST /v1/conversations/:id/messages ─────────────────────────────────────

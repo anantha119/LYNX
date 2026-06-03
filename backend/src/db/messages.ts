@@ -126,8 +126,10 @@ export async function markMessageError(id: string, partialText = ""): Promise<vo
 }
 
 /**
- * Load a conversation's messages oldest-first for display.
- * Linear thread only (no branching yet); excludes soft-deleted rows.
+ * Load ALL of a conversation's messages, oldest-first.
+ * Used server-side to assemble model context on the send path (will be
+ * replaced by budgeted context assembly later). Not for the API read path —
+ * use getMessagesPage for that. Linear thread only; excludes soft-deleted rows.
  */
 export async function getMessages(conversationId: string): Promise<MessageRow[]> {
   const r = await query<MessageRow>(
@@ -138,6 +140,64 @@ export async function getMessages(conversationId: string): Promise<MessageRow[]>
     [conversationId]
   );
   return r.rows;
+}
+
+export type MessagePage = {
+  data: MessageRow[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+const DEFAULT_PAGE_LIMIT = 50;
+const MAX_PAGE_LIMIT = 100;
+
+/**
+ * Cursor-paginated message read for the API.
+ *
+ * Returns the most recent `limit` messages oldest-first, or — when `before`
+ * (a message ULID) is supplied — the page of messages immediately older than
+ * that cursor. Because ULIDs sort by creation time, `id < before` means
+ * "older than", so this is a clean range scan on idx_messages_conv_id
+ * (conversation_id, id DESC).
+ *
+ * `hasMore` / `nextCursor` are derived by fetching one extra row (limit + 1)
+ * rather than running a separate COUNT. `nextCursor` is the oldest id in the
+ * returned page — pass it back as `before` to load the next older page.
+ *
+ * Linear thread only (no branching yet); excludes soft-deleted rows.
+ */
+export async function getMessagesPage(
+  conversationId: string,
+  opts: { before?: string | null; limit?: number } = {}
+): Promise<MessagePage> {
+  const limit = Math.min(Math.max(opts.limit ?? DEFAULT_PAGE_LIMIT, 1), MAX_PAGE_LIMIT);
+
+  const params: unknown[] = [conversationId];
+  let cursorClause = "";
+  if (opts.before) {
+    params.push(opts.before);
+    cursorClause = `AND id < $${params.length}`;
+  }
+  params.push(limit + 1); // fetch one extra to detect a further page
+
+  const r = await query<MessageRow>(
+    `SELECT id, role, content, status, created_at
+     FROM messages
+     WHERE conversation_id = $1 AND deleted_at IS NULL ${cursorClause}
+     ORDER BY id DESC
+     LIMIT $${params.length}`,
+    params
+  );
+
+  const hasMore = r.rows.length > limit;
+  const rows = hasMore ? r.rows.slice(0, limit) : r.rows;
+  rows.reverse(); // query returns newest-first; UI renders oldest-first
+
+  return {
+    data: rows,
+    nextCursor: hasMore ? (rows[0]?.id ?? null) : null,
+    hasMore,
+  };
 }
 
 /** The id of the current leaf message, used as parent_id for the next message. */
