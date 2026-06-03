@@ -1,0 +1,22 @@
+# Dependencies — installed fresh inside the container via npm ci
+node_modules/
+
+# Compiled output — built inside the container from source
+dist/
+
+# Secrets — NEVER bake credentials into an image
+.env
+.env.*
+
+# Source maps (optional: keeps the image slightly smaller)
+**/*.map
+
+# Version control and local tooling
+.git/
+.gitignore
+
+# Database migrations — not needed at runtime (run separately against Cloud SQL)
+migration/
+
+# Dev docs — not needed at runtime
+*.md
