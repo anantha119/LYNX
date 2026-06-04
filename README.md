@@ -4,11 +4,14 @@
 
 ### *What can I help you ship?*
 
+[**🚀 Try the Live Demo**](https://lynx-mu-eight.vercel.app)
+
 An AI chat application built for engineers — fast, streaming, and persistent.
 Think Claude.ai, with a dark terminal aesthetic.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js%2016-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 [![Hono](https://img.shields.io/badge/Hono-E36002?logo=hono&logoColor=white)](https://hono.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Google Cloud](https://img.shields.io/badge/Google%20Cloud-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/)
@@ -41,7 +44,7 @@ and complexity deferred until a measurement demands it.
 
 ```mermaid
 flowchart LR
-    B[Browser] -->|HTTPS + Bearer JWT| FE[Next.js Frontend]
+    B[Browser] -->|HTTPS + Bearer JWT| FE[Next.js Frontend / Vercel]
     FE -->|Auth0 OIDC| A[(Auth0)]
     FE -->|REST + streaming| API[Hono API / Cloud Run]
     API -->|JWKS verify| A
@@ -178,6 +181,11 @@ gcloud run deploy lynx-backend --image=<...> --region=<region> --allow-unauthent
 
 Secrets are injected at runtime from **Secret Manager**; the Cloud SQL connection
 uses the built-in connector. No credentials are baked into the image.
+
+The frontend is deployed to **Vercel**:
+- Connect the GitHub repository to a new Vercel project.
+- Set the Root Directory to `lynx`.
+- Inject the Auth0 and Backend API URLs as Vercel Environment Variables.
 
 ## Security
 
