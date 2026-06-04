@@ -9,6 +9,7 @@ export type MessageRow = {
   content: { type: string; text?: string }[];
   status: string;
   created_at: string;
+  token_count: number | null;
 };
 
 /** Wrap a plain string as the JSONB array-of-parts the schema requires. */
@@ -72,7 +73,8 @@ async function appendMessage(opts: {
 export function insertUserMessage(
   conversationId: string,
   parentId: string | null,
-  text: string
+  text: string,
+  tokenCount: number | null = null
 ): Promise<string> {
   return appendMessage({
     conversationId,
@@ -80,6 +82,7 @@ export function insertUserMessage(
     role: "user",
     text,
     status: "complete",
+    tokenCount,
   });
 }
 
@@ -133,7 +136,7 @@ export async function markMessageError(id: string, partialText = ""): Promise<vo
  */
 export async function getMessages(conversationId: string): Promise<MessageRow[]> {
   const r = await query<MessageRow>(
-    `SELECT id, role, content, status, created_at
+    `SELECT id, role, content, status, created_at, token_count
      FROM messages
      WHERE conversation_id = $1 AND deleted_at IS NULL
      ORDER BY id ASC`,
@@ -181,7 +184,7 @@ export async function getMessagesPage(
   params.push(limit + 1); // fetch one extra to detect a further page
 
   const r = await query<MessageRow>(
-    `SELECT id, role, content, status, created_at
+    `SELECT id, role, content, status, created_at, token_count
      FROM messages
      WHERE conversation_id = $1 AND deleted_at IS NULL ${cursorClause}
      ORDER BY id DESC

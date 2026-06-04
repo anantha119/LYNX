@@ -2,10 +2,11 @@ import "dotenv/config";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
-import { langfuse, CHAT_MODEL } from "./ai/config.js";
+import { ai, langfuse, CHAT_MODEL } from "./ai/config.js";
 import { streamChat, type ChatMessage } from "./ai/chat.js";
 import { generateTitle } from "./ai/title.js";
 import { initSystemPrompt } from "./ai/prompt.js";
+import { generateSummaryAsync } from "./ai/summary.js";
 import { authMiddleware } from "./middleware/auth.js";
 import {
   createConversation,
@@ -22,6 +23,7 @@ import {
   getMessagesPage,
   getActiveLeafId,
 } from "./db/messages.js";
+import { getLatestSummary } from "./db/summaries.js";
 
 type Env = { Variables: { userId: string } };
 
@@ -103,15 +105,65 @@ app.post("/v1/conversations/:id/messages", async (c) => {
 
   // 1. Persist the user message (advances the conversation's active leaf).
   const parentId = await getActiveLeafId(id);
-  const userMsgId = await insertUserMessage(id, parentId, content);
+  const userTokensRes = await ai.models.countTokens({ model: CHAT_MODEL, contents: content });
+  const userMsgId = await insertUserMessage(id, parentId, content, userTokensRes.totalTokens ?? 0);
 
-  // 2. Build the model context from the now-persisted history.
-  const history: ChatMessage[] = (await getMessages(id))
-    .filter((m) => m.role === "user" || m.role === "assistant")
-    .map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content.map((p) => p.text ?? "").join(""),
-    }));
+  // 2. Build the model context using Context Assembly & Token Budgeting
+  const allMessages = await getMessages(id);
+  const latestSummary = await getLatestSummary(id);
+
+  const MAX_CONTEXT_TOKENS = 8000;
+  const systemPromptTokens = 500;
+  const summaryTokens = latestSummary?.token_count ?? 0;
+  
+  let budget = MAX_CONTEXT_TOKENS - systemPromptTokens - summaryTokens;
+  const recentMessages: typeof allMessages = [];
+  let reachedSummaryBoundary = false;
+  
+  for (let i = allMessages.length - 1; i >= 0; i--) {
+    const msg = allMessages[i];
+    if (msg.role !== "user" && msg.role !== "assistant") continue;
+
+    if (latestSummary && msg.id <= latestSummary.covers_through_id) {
+      reachedSummaryBoundary = true;
+      break;
+    }
+
+    const msgTokens = msg.token_count ?? 500;
+    if (budget - msgTokens < 0 && recentMessages.length > 0) {
+      break;
+    }
+
+    budget -= msgTokens;
+    recentMessages.unshift(msg);
+  }
+
+  const history: ChatMessage[] = [];
+  if (latestSummary) {
+    history.push({
+      role: "user",
+      content: `[System Note: Below is a summary of the older messages in this conversation.]\n\n${latestSummary.summary}`
+    });
+  }
+
+  for (const msg of recentMessages) {
+    history.push({
+      role: msg.role as "user" | "assistant",
+      content: msg.content.map((p) => p.text ?? "").join(""),
+    });
+  }
+
+  // 2b. If we dropped messages that aren't summarized yet, kick off summarization async
+  if (!reachedSummaryBoundary && allMessages.length > recentMessages.length && recentMessages.length > 0) {
+    // The message just before the first one we included is our coversThrough boundary
+    const oldestIncludedIndex = allMessages.findIndex(m => m.id === recentMessages[0].id);
+    if (oldestIncludedIndex > 0) {
+      const coversThroughId = allMessages[oldestIncludedIndex - 1].id;
+      generateSummaryAsync(id, coversThroughId).catch(err => 
+        console.error("[Summary] Async generation failed:", err)
+      );
+    }
+  }
 
   // 3. Durable assistant row exists before streaming begins.
   const assistantMsgId = await insertAssistantPlaceholder(id, userMsgId, CHAT_MODEL);
@@ -126,7 +178,8 @@ app.post("/v1/conversations/:id/messages", async (c) => {
           fullText += token;
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "token", text: token })}\n\n`));
         });
-        await finalizeAssistantMessage(assistantMsgId, fullText);
+        const assistantTokensRes = await ai.models.countTokens({ model: CHAT_MODEL, contents: fullText });
+        await finalizeAssistantMessage(assistantMsgId, fullText, assistantTokensRes.totalTokens ?? 0);
 
         // 4. Auto-title the conversation on its first exchange.
         if (!conv.title) {
@@ -167,17 +220,43 @@ app.post("/v1/conversations/:id/messages", async (c) => {
 const PORT = Number(process.env.PORT ?? 8080);
 
 // Load the system prompt into memory before serving traffic, then start the
-// background refresh. Chat requests read it instantly — no per-request fetch.
-await initSystemPrompt();
+// app server.
+let server: ReturnType<typeof serve> | undefined;
 
-const server = serve({ fetch: app.fetch, port: PORT, hostname: "0.0.0.0" });
-console.log(`Lynx backend running on http://localhost:${PORT}`);
+async function startServer() {
+  await initSystemPrompt();
+
+  try {
+    const { query } = await import("./db/pool.js");
+    await query(`
+      CREATE TABLE IF NOT EXISTS conversation_summaries (
+        conversation_id     UUID NOT NULL REFERENCES conversations(id),
+        covers_through_id   TEXT NOT NULL,
+        summary             TEXT NOT NULL,
+        token_count         INT NOT NULL,
+        created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+        PRIMARY KEY (conversation_id, covers_through_id)
+      );
+    `);
+    console.log("[db] conversation_summaries table verified.");
+  } catch (err) {
+    console.error("[db] Failed to run migration:", err);
+  }
+
+  server = serve({
+    fetch: app.fetch,
+    port: PORT,
+  });
+  console.log(`[lynx-backend] Running on http://localhost:${PORT}`);
+}
+
+startServer();
 
 // Graceful shutdown — flush any pending Langfuse traces before exiting so
 // observability data is never lost on Ctrl+C, tsx restarts, or Cloud Run stops.
 async function shutdown() {
   console.log("\nShutting down — flushing Langfuse traces...");
-  server.close();
+  if (server) server.close();
   await langfuse.shutdown();
   process.exit(0);
 }
