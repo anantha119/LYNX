@@ -130,8 +130,9 @@ app.post("/v1/conversations/:id/messages", async (c) => {
 
         // 4. Auto-title the conversation on its first exchange.
         if (!conv.title) {
-          const title = await generateTitle(content);
-          await updateTitle(userId, id, title);
+          generateTitle(content)
+            .then((title) => updateTitle(userId, id, title))
+            .catch((err) => console.error("[messages] async title error:", err));
         }
       } catch (err) {
         console.error("[messages] stream error:", err);
