@@ -98,7 +98,8 @@ async function apiSendMessage(
   id: string,
   content: string,
   token: string,
-  onToken: (token: string) => void
+  onToken: (token: string) => void,
+  onTitle: (title: string) => void
 ): Promise<void> {
   const res = await fetch(`${API}/v1/conversations/${id}/messages`, {
     method: "POST",
@@ -108,10 +109,24 @@ async function apiSendMessage(
   if (!res.body) return;
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
+  let buffer = "";
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    onToken(decoder.decode(value, { stream: true }));
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop() ?? "";
+    for (const part of parts) {
+      if (part.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(part.slice(6));
+          if (data.type === "token") onToken(data.text);
+          else if (data.type === "title") onTitle(data.title);
+        } catch (e) {
+          console.error("Failed to parse SSE message:", part);
+        }
+      }
+    }
   }
 }
 
@@ -210,12 +225,22 @@ export function ChatApp() {
 
       // Stream the reply from the backend; the server persists both messages.
       try {
-        await apiSendMessage(convId, text, accessToken, (token) => {
-          updateLastMessage(convId!, (prev) => ({
-            content: (prev.content ?? "") + token,
-            streaming: true,
-          }));
-        });
+        await apiSendMessage(
+          convId,
+          text,
+          accessToken,
+          (token) => {
+            updateLastMessage(convId!, (prev) => ({
+              content: (prev.content ?? "") + token,
+              streaming: true,
+            }));
+          },
+          (title) => {
+            setConversations((prev) =>
+              prev.map((c) => (c.id === convId ? { ...c, title } : c))
+            );
+          }
+        );
       } catch (err) {
         console.error("send failed:", err);
         updateLastMessage(convId, {

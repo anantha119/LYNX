@@ -124,21 +124,29 @@ app.post("/v1/conversations/:id/messages", async (c) => {
       try {
         await streamChat(history, (token) => {
           fullText += token;
-          controller.enqueue(encoder.encode(token));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "token", text: token })}\n\n`));
         });
         await finalizeAssistantMessage(assistantMsgId, fullText);
 
         // 4. Auto-title the conversation on its first exchange.
         if (!conv.title) {
           generateTitle(content)
-            .then((title) => updateTitle(userId, id, title))
-            .catch((err) => console.error("[messages] async title error:", err));
+            .then((title) => {
+              updateTitle(userId, id, title);
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "title", title })}\n\n`));
+              controller.close();
+            })
+            .catch((err) => {
+              console.error("[messages] async title error:", err);
+              controller.close();
+            });
+        } else {
+          controller.close();
         }
       } catch (err) {
         console.error("[messages] stream error:", err);
         await markMessageError(assistantMsgId, fullText);
-        controller.enqueue(encoder.encode("\n\n[Error: failed to get response]"));
-      } finally {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "token", text: "\\n\\n[Error: failed to get response]" })}\n\n`));
         controller.close();
       }
     },
@@ -146,8 +154,9 @@ app.post("/v1/conversations/:id/messages", async (c) => {
 
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Transfer-Encoding": "chunked",
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
       "Access-Control-Allow-Origin": CORS_ORIGIN,
     },
   });
