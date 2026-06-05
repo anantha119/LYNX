@@ -13,19 +13,27 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
   }
   const token = authHeader.slice(7);
 
+  let payload;
   try {
-    const { payload } = await jwtVerify(token, jwks, {
+    const result = await jwtVerify(token, jwks, {
       audience: process.env.AUTH0_AUDIENCE,
       issuer: `https://${process.env.AUTH0_DOMAIN}/`,
     });
-
-    const auth0Sub = payload.sub!;
-    const userId = await getOrCreateUser(auth0Sub, token);
-    c.set("userId", userId);
-
-    await next();
+    payload = result.payload;
   } catch (err) {
     console.error("[auth] JWT verification failed:", err);
     return c.json({ error: "Unauthorized" }, 401);
   }
+
+  const auth0Sub = payload.sub!;
+  let userId: string;
+  try {
+    userId = await getOrCreateUser(auth0Sub, token);
+  } catch (err) {
+    console.error("[auth] DB user fetch failed:", err);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+
+  c.set("userId", userId);
+  await next();
 };
