@@ -322,6 +322,7 @@ export function ChatApp() {
         onNew={handleNew}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
+        user={user || undefined}
       />
 
       {/* ── Main area ── */}

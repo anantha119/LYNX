@@ -9,6 +9,8 @@ import {
   X,
 } from "lucide-react";
 
+import { UserProfile } from "@auth0/nextjs-auth0/client";
+
 export type Conversation = {
   id: string;
   title: string;
@@ -23,6 +25,7 @@ interface ChatSidebarProps {
   onNew: () => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
+  user?: UserProfile;
 }
 
 /* ─── Group conversations by time ───────────────────────────────────────── */
@@ -57,8 +60,11 @@ export function ChatSidebar({
   onNew,
   mobileOpen,
   onMobileClose,
+  user,
 }: ChatSidebarProps) {
   const groups = groupConversations(conversations);
+  const displayName = user?.name || user?.nickname || user?.email || "User";
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <>
@@ -191,11 +197,16 @@ export function ChatSidebar({
         <div className="px-3 py-3 border-t border-stone-900">
           <div className="flex items-center gap-2.5">
             {/* Avatar */}
-            <div className="w-6 h-6 rounded-sm bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-mono font-bold text-amber-400">H</span>
+            <div className="w-6 h-6 rounded-sm bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              {user?.picture ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.picture} alt={displayName} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-[10px] font-mono font-bold text-amber-400">{initial}</span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-mono text-stone-300 truncate">Haki</p>
+              <p className="text-xs font-mono text-stone-300 truncate">{displayName}</p>
               <p className="text-[9px] font-mono text-stone-700 truncate">Free plan</p>
             </div>
             <button className="p-1 rounded text-stone-700 hover:text-stone-400 transition-colors cursor-pointer">
