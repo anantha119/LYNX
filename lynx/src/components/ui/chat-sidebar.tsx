@@ -9,7 +9,9 @@ import {
   X,
 } from "lucide-react";
 
-import { UserProfile } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@auth0/nextjs-auth0/client";
+
+export type UserProfile = NonNullable<ReturnType<typeof useUser>["user"]>;
 
 export type Conversation = {
   id: string;
