@@ -13,10 +13,17 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# ── Xcode / iOS ───────────────────────────────────────────────
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/
+
 # ── Local tooling / agent config ─────────────────────────────
 .claude/
 
 # ── Personal working notes (not part of the public project) ──
+CLAUDE.md
 LYNX.md
 PROGRESS.md
 RUNNING.md

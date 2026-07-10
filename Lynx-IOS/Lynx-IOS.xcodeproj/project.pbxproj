@@ -1,0 +1,631 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C6934CC211224A015A63EB1 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 371DD536F8302C00F88E3374 /* MarkdownUI */; };
+		42A4289E4BD3A7837DB22DBA /* Auth0 in Frameworks */ = {isa = PBXBuildFile; productRef = 8FA5860EDEC9965DC42DF7B5 /* Auth0 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3AF1B28C30015E2E0056EA68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF1B27630015E2C0056EA68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3AF1B27D30015E2C0056EA68;
+			remoteInfo = "Lynx-IOS";
+		};
+		3AF1B29630015E2E0056EA68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF1B27630015E2C0056EA68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3AF1B27D30015E2C0056EA68;
+			remoteInfo = "Lynx-IOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3AF1B27E30015E2C0056EA68 /* Lynx-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lynx-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF1B28B30015E2E0056EA68 /* Lynx-IOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Lynx-IOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF1B29530015E2E0056EA68 /* Lynx-IOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Lynx-IOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A6FB25ED6456A9287DB010D4 /* Exceptions for "Lynx-IOS" folder in "Lynx-IOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			target = 3AF1B27D30015E2C0056EA68 /* Lynx-IOS */;
+			membershipExceptions = (
+				Info.plist,
+			);
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		3AF1B28030015E2C0056EA68 /* Lynx-IOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A6FB25ED6456A9287DB010D4 /* Exceptions for "Lynx-IOS" folder in "Lynx-IOS" target */,
+			);
+			path = "Lynx-IOS";
+			sourceTree = "<group>";
+		};
+		3AF1B28E30015E2E0056EA68 /* Lynx-IOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Lynx-IOSTests";
+			sourceTree = "<group>";
+		};
+		3AF1B29830015E2E0056EA68 /* Lynx-IOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Lynx-IOSUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3AF1B27B30015E2C0056EA68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				42A4289E4BD3A7837DB22DBA /* Auth0 in Frameworks */,
+				1C6934CC211224A015A63EB1 /* MarkdownUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B28830015E2E0056EA68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B29230015E2E0056EA68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3AF1B27530015E2C0056EA68 = {
+			isa = PBXGroup;
+			children = (
+				3AF1B28030015E2C0056EA68 /* Lynx-IOS */,
+				3AF1B28E30015E2E0056EA68 /* Lynx-IOSTests */,
+				3AF1B29830015E2E0056EA68 /* Lynx-IOSUITests */,
+				3AF1B27F30015E2C0056EA68 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3AF1B27F30015E2C0056EA68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3AF1B27E30015E2C0056EA68 /* Lynx-IOS.app */,
+				3AF1B28B30015E2E0056EA68 /* Lynx-IOSTests.xctest */,
+				3AF1B29530015E2E0056EA68 /* Lynx-IOSUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3AF1B27D30015E2C0056EA68 /* Lynx-IOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AF1B29F30015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOS" */;
+			buildPhases = (
+				3AF1B27A30015E2C0056EA68 /* Sources */,
+				3AF1B27B30015E2C0056EA68 /* Frameworks */,
+				3AF1B27C30015E2C0056EA68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3AF1B28030015E2C0056EA68 /* Lynx-IOS */,
+			);
+			name = "Lynx-IOS";
+			packageProductDependencies = (
+				8FA5860EDEC9965DC42DF7B5 /* Auth0 */,
+				371DD536F8302C00F88E3374 /* MarkdownUI */,
+			);
+			productName = "Lynx-IOS";
+			productReference = 3AF1B27E30015E2C0056EA68 /* Lynx-IOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3AF1B28A30015E2E0056EA68 /* Lynx-IOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AF1B2A230015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOSTests" */;
+			buildPhases = (
+				3AF1B28730015E2E0056EA68 /* Sources */,
+				3AF1B28830015E2E0056EA68 /* Frameworks */,
+				3AF1B28930015E2E0056EA68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3AF1B28D30015E2E0056EA68 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3AF1B28E30015E2E0056EA68 /* Lynx-IOSTests */,
+			);
+			name = "Lynx-IOSTests";
+			packageProductDependencies = (
+			);
+			productName = "Lynx-IOSTests";
+			productReference = 3AF1B28B30015E2E0056EA68 /* Lynx-IOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3AF1B29430015E2E0056EA68 /* Lynx-IOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AF1B2A530015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOSUITests" */;
+			buildPhases = (
+				3AF1B29130015E2E0056EA68 /* Sources */,
+				3AF1B29230015E2E0056EA68 /* Frameworks */,
+				3AF1B29330015E2E0056EA68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3AF1B29730015E2E0056EA68 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3AF1B29830015E2E0056EA68 /* Lynx-IOSUITests */,
+			);
+			name = "Lynx-IOSUITests";
+			packageProductDependencies = (
+			);
+			productName = "Lynx-IOSUITests";
+			productReference = 3AF1B29530015E2E0056EA68 /* Lynx-IOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3AF1B27630015E2C0056EA68 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					3AF1B27D30015E2C0056EA68 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					3AF1B28A30015E2E0056EA68 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 3AF1B27D30015E2C0056EA68;
+					};
+					3AF1B29430015E2E0056EA68 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 3AF1B27D30015E2C0056EA68;
+					};
+				};
+			};
+			buildConfigurationList = 3AF1B27930015E2C0056EA68 /* Build configuration list for PBXProject "Lynx-IOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3AF1B27530015E2C0056EA68;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6E64F17BC6CAF4FFB3D0669F /* XCRemoteSwiftPackageReference "Auth0" */,
+				69D828F1102BA09BD9743A42 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3AF1B27F30015E2C0056EA68 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3AF1B27D30015E2C0056EA68 /* Lynx-IOS */,
+				3AF1B28A30015E2E0056EA68 /* Lynx-IOSTests */,
+				3AF1B29430015E2E0056EA68 /* Lynx-IOSUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3AF1B27C30015E2C0056EA68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B28930015E2E0056EA68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B29330015E2E0056EA68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3AF1B27A30015E2C0056EA68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B28730015E2E0056EA68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF1B29130015E2E0056EA68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3AF1B28D30015E2E0056EA68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3AF1B27D30015E2C0056EA68 /* Lynx-IOS */;
+			targetProxy = 3AF1B28C30015E2E0056EA68 /* PBXContainerItemProxy */;
+		};
+		3AF1B29730015E2E0056EA68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3AF1B27D30015E2C0056EA68 /* Lynx-IOS */;
+			targetProxy = 3AF1B29630015E2E0056EA68 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3AF1B29D30015E2E0056EA68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3AF1B29E30015E2E0056EA68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3AF1B2A030015E2E0056EA68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Lynx-IOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3AF1B2A130015E2E0056EA68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Lynx-IOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3AF1B2A330015E2E0056EA68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lynx-IOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Lynx-IOS";
+			};
+			name = Debug;
+		};
+		3AF1B2A430015E2E0056EA68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lynx-IOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Lynx-IOS";
+			};
+			name = Release;
+		};
+		3AF1B2A630015E2E0056EA68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Lynx-IOS";
+			};
+			name = Debug;
+		};
+		3AF1B2A730015E2E0056EA68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 29KCP7CBB8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "BU.Lynx-IOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Lynx-IOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3AF1B27930015E2C0056EA68 /* Build configuration list for PBXProject "Lynx-IOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF1B29D30015E2E0056EA68 /* Debug */,
+				3AF1B29E30015E2E0056EA68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AF1B29F30015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF1B2A030015E2E0056EA68 /* Debug */,
+				3AF1B2A130015E2E0056EA68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AF1B2A230015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF1B2A330015E2E0056EA68 /* Debug */,
+				3AF1B2A430015E2E0056EA68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AF1B2A530015E2E0056EA68 /* Build configuration list for PBXNativeTarget "Lynx-IOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF1B2A630015E2E0056EA68 /* Debug */,
+				3AF1B2A730015E2E0056EA68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		69D828F1102BA09BD9743A42 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
+		6E64F17BC6CAF4FFB3D0669F /* XCRemoteSwiftPackageReference "Auth0" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/Auth0.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		371DD536F8302C00F88E3374 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 69D828F1102BA09BD9743A42 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+		8FA5860EDEC9965DC42DF7B5 /* Auth0 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6E64F17BC6CAF4FFB3D0669F /* XCRemoteSwiftPackageReference "Auth0" */;
+			productName = Auth0;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 3AF1B27630015E2C0056EA68 /* Project object */;
+}
