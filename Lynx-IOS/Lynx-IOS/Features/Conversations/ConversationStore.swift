@@ -65,6 +65,10 @@ final class ConversationStore {
         activeId = nil
     }
 
+    func dismissError() {
+        errorMessage = nil
+    }
+
     // MARK: - Pagination (scroll-up loads older page)
 
     func loadOlder(for id: String) async {

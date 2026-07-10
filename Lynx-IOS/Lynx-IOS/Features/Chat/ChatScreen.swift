@@ -5,6 +5,7 @@ import SwiftUI
 /// the hero empty-state + input, and the dark radial-glow background.
 struct ChatScreen: View {
     let store: ConversationStore
+    let authStore: AuthStore
     var onOpenSidebar: () -> Void
 
     @State private var draft = ""
@@ -20,9 +21,15 @@ struct ChatScreen: View {
             VStack(spacing: 0) {
                 topBar
 
+                if let error = store.errorMessage {
+                    ErrorBanner(message: error) { store.dismissError() }
+                        .padding(.top, 8)
+                }
+
                 if store.activeId != nil, !store.activeMessages.isEmpty {
                     MessageThreadView(
                         messages: store.activeMessages,
+                        authStore: authStore,
                         hasMore: store.activeId.map(store.activeHasMore) ?? false,
                         loadingOlder: store.loadingOlderId == store.activeId,
                         onLoadOlder: { Task { await store.loadOlder(for: store.activeId!) } }
@@ -39,6 +46,7 @@ struct ChatScreen: View {
                     heroEmptyState
                 }
             }
+            .animation(.easeOut(duration: 0.2), value: store.errorMessage)
         }
     }
 
@@ -62,7 +70,8 @@ struct ChatScreen: View {
             Spacer()
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.top, 18)
+        .padding(.bottom, 12)
         .overlay(alignment: .bottom) {
             if store.activeId != nil {
                 Rectangle().fill(LynxColor.stone900.opacity(0.8)).frame(height: 1)
@@ -71,25 +80,72 @@ struct ChatScreen: View {
     }
 
     private var heroEmptyState: some View {
-        VStack {
+        VStack(spacing: 0) {
             Spacer()
-            VStack(spacing: 28) {
-                VStack(spacing: 10) {
-                    Text("What can I help")
-                        .font(LynxFont.display(28, weight: LynxFont.Display.bold))
-                        .foregroundStyle(LynxColor.stone100)
-                    Text("you ship?")
-                        .font(LynxFont.display(28, weight: LynxFont.Display.bold))
-                        .foregroundStyle(LynxColor.amberBright)
-                }
-                .multilineTextAlignment(.center)
 
+            VStack(spacing: 10) {
+                Text("What can I help")
+                    .font(LynxFont.display(28, weight: LynxFont.Display.bold))
+                    .foregroundStyle(LynxColor.stone100)
+                Text("you ship?")
+                    .font(LynxFont.display(28, weight: LynxFont.Display.bold))
+                    .foregroundStyle(LynxColor.amberBright)
+            }
+            .multilineTextAlignment(.center)
+
+            Spacer()
+
+            VStack(spacing: 14) {
                 ChatInputBar(text: $draft, onSend: send)
+                actionChips
             }
             .padding(.horizontal, 20)
-            Spacer()
+            .padding(.bottom, 12)
         }
         .background(heroGlow)
+    }
+
+    private struct ActionChip: Identifiable {
+        let id = UUID()
+        let icon: String
+        let label: String
+        let prompt: String
+    }
+
+    private static let actionChips: [ActionChip] = [
+        ActionChip(icon: "photo.on.rectangle", label: "Clone a Screenshot", prompt: "Clone a screenshot for me"),
+        ActionChip(icon: "aspectratio", label: "Import from Figma", prompt: "Import a Figma design"),
+        ActionChip(icon: "square.and.arrow.up", label: "Upload a Project", prompt: "Upload and analyze my project"),
+        ActionChip(icon: "rectangle.stack", label: "Landing Page", prompt: "Build me a landing page"),
+        ActionChip(icon: "person.crop.rectangle", label: "Sign Up Form", prompt: "Build me a sign up form"),
+    ]
+
+    private var actionChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(Self.actionChips) { chip in
+                    Button {
+                        sendText(chip.prompt)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: chip.icon)
+                                .font(.system(size: 12))
+                            Text(chip.label)
+                                .font(LynxFont.mono(11))
+                        }
+                        .foregroundStyle(LynxColor.stone500)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(LynxColor.panelBg)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: LynxMetrics.cornerRadius)
+                                .strokeBorder(LynxColor.stone800, lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: LynxMetrics.cornerRadius))
+                    }
+                }
+            }
+        }
     }
 
     private var heroGlow: some View {
@@ -107,6 +163,10 @@ struct ChatScreen: View {
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
         draft = ""
+        sendText(text)
+    }
+
+    private func sendText(_ text: String) {
         Task { await store.send(text) }
     }
 }

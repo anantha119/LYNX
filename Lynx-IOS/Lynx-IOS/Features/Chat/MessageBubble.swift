@@ -4,6 +4,7 @@ import SwiftUI
 /// in a stone box, assistant messages left-aligned with an amber rule.
 struct MessageBubble: View {
     let message: ChatMessage
+    let authStore: AuthStore
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -14,25 +15,28 @@ struct MessageBubble: View {
             } else {
                 Spacer(minLength: 24)
                 content
-                userAvatar
+                AvatarView(authStore: authStore, size: 22)
+                    .padding(.top, 2)
             }
         }
     }
 
-    private var userAvatar: some View {
-        ZStack {
-            LynxColor.stone800
-            Text("H")
-                .font(LynxFont.mono(9, weight: LynxFont.Mono.medium))
-                .foregroundStyle(LynxColor.stone300)
+    private var content: some View {
+        Group {
+            if message.role == .user {
+                // Relative to the scroll container's width (mirrors the web's
+                // max-w-[72%]) so it scales across iPhone SE through Pro Max,
+                // instead of a fixed point width.
+                bubbleStack
+                    .containerRelativeFrame(.horizontal, alignment: .trailing) { width, _ in width * 0.72 }
+            } else {
+                bubbleStack
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
-        .frame(width: 22, height: 22)
-        .overlay(RoundedRectangle(cornerRadius: 2).strokeBorder(LynxColor.stone700, lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 2))
-        .padding(.top, 2)
     }
 
-    private var content: some View {
+    private var bubbleStack: some View {
         VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 4) {
             Group {
                 if message.role == .assistant {
@@ -61,7 +65,6 @@ struct MessageBubble: View {
                 .foregroundStyle(LynxColor.stone700)
                 .padding(.horizontal, 4)
         }
-        .frame(maxWidth: message.role == .user ? 280 : .infinity, alignment: message.role == .user ? .trailing : .leading)
     }
 
     private static let timeFormatter: DateFormatter = {

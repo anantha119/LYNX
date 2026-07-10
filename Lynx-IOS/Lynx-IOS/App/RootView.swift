@@ -50,7 +50,11 @@ private struct MainAppView: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
-            ChatScreen(store: store, onOpenSidebar: { withAnimation(.easeOut(duration: 0.25)) { isSidebarOpen = true } })
+            ChatScreen(
+                store: store,
+                authStore: authStore,
+                onOpenSidebar: { withAnimation(.easeOut(duration: 0.25)) { isSidebarOpen = true } }
+            )
 
             if isSidebarOpen {
                 Color.black.opacity(0.6)

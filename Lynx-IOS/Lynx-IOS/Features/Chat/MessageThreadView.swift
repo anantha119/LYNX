@@ -5,6 +5,7 @@ import SwiftUI
 /// logic in chat-messages.tsx.
 struct MessageThreadView: View {
     let messages: [ChatMessage]
+    let authStore: AuthStore
     let hasMore: Bool
     let loadingOlder: Bool
     let onLoadOlder: () -> Void
@@ -27,7 +28,7 @@ struct MessageThreadView: View {
                     }
 
                     ForEach(messages) { message in
-                        MessageBubble(message: message)
+                        MessageBubble(message: message, authStore: authStore)
                             .id(message.id)
                     }
 
