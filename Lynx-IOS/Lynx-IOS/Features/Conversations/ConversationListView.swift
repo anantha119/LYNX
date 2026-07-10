@@ -14,6 +14,12 @@ struct ConversationListView: View {
 
             VStack(spacing: 0) {
                 header
+
+                if let error = store.errorMessage {
+                    ErrorBanner(message: error) { store.dismissError() }
+                        .padding(.bottom, 8)
+                }
+
                 newConversationButton
 
                 if groups.isEmpty {
@@ -45,6 +51,7 @@ struct ConversationListView: View {
                 Spacer(minLength: 0)
                 userFooter
             }
+            .animation(.easeOut(duration: 0.2), value: store.errorMessage)
         }
         .task { await store.loadConversations() }
     }
@@ -59,7 +66,8 @@ struct ConversationListView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.top, 20)
+        .padding(.bottom, 16)
     }
 
     private var newConversationButton: some View {

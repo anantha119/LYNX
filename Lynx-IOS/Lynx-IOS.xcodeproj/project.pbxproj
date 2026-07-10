@@ -37,10 +37,10 @@
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		A6FB25ED6456A9287DB010D4 /* Exceptions for "Lynx-IOS" folder in "Lynx-IOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			target = 3AF1B27D30015E2C0056EA68 /* Lynx-IOS */;
 			membershipExceptions = (
 				Info.plist,
 			);
+			target = 3AF1B27D30015E2C0056EA68 /* Lynx-IOS */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 

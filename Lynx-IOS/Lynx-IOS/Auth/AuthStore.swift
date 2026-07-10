@@ -51,9 +51,19 @@ final class AuthStore {
             _ = credentialsManager.store(credentials: credentials)
             state = .signedIn(Self.userInfo(from: credentials))
         } catch {
-            lastError = "Sign-in failed. Please try again."
+            lastError = Self.describe(error)
             state = .signedOut
         }
+    }
+
+    /// Surfaces the underlying Auth0 error detail rather than a generic
+    /// message, since a failed exchange (bad audience/scope, callback
+    /// mismatch, etc.) is otherwise indistinguishable from a user cancel.
+    private static func describe(_ error: Error) -> String {
+        if let webAuthError = error as? WebAuthError {
+            return webAuthError.debugDescription
+        }
+        return error.localizedDescription
     }
 
     func logout() async {
