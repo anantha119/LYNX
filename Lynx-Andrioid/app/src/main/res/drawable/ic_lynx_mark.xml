@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Four-point sparkle, hand-drawn to match the iOS app's SF Symbols
+         `sparkle` glyph used for the recurring LynxMark brand element. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,0
+            C12.4,4.2 12.9,8.3 13.7,9.1
+            C14.5,9.9 18.6,10.4 22.8,10.8
+            L24,12
+            L22.8,13.2
+            C18.6,13.6 14.5,14.1 13.7,14.9
+            C12.9,15.7 12.4,19.8 12,24
+            L11.2,14.9
+            C10.4,14.1 6.3,13.6 2.1,13.2
+            L0,12
+            L2.1,10.8
+            C6.3,10.4 10.4,9.9 11.2,9.1
+            C11.6,4.9 11.8,2.1 12,0
+            Z" />
+</vector>

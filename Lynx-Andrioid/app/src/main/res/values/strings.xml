@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Lynx</string>
+
+    <!-- Auth0 native (PKCE) app — shared with iOS (same Client ID), with
+         both the iOS and Android callback/logout URLs allow-listed on this
+         one Auth0 Native application. -->
+    <string name="com_auth0_client_id" translatable="false">LYGOGP0G0EzaKz4kGMKyVfuTxNcE92XM</string>
+    <string name="com_auth0_domain" translatable="false">dev-z6spty18qf8usxoo.us.auth0.com</string>
+</resources>
