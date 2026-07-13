@@ -7,11 +7,13 @@
 [**🚀 Try the Live Demo**](https://lynx-mu-eight.vercel.app)
 
 An AI chat application built for engineers — fast, streaming, and persistent.
-Think Claude.ai, with a dark terminal aesthetic.
+Think Claude.ai, with a dark terminal aesthetic. Ships as a Next.js web app and a
+native SwiftUI iOS app, both backed by the same Hono API.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js%2016-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
+[![Swift](https://img.shields.io/badge/Swift-F05138?logo=swift&logoColor=white)](https://swift.org/)
 [![Hono](https://img.shields.io/badge/Hono-E36002?logo=hono&logoColor=white)](https://hono.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Google Cloud](https://img.shields.io/badge/Google%20Cloud-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/)
@@ -22,10 +24,10 @@ Think Claude.ai, with a dark terminal aesthetic.
 
 ## Overview
 
-Lynx is a full-stack, streaming AI chat application. A Next.js frontend talks to a
-Hono API that streams responses from Google's Gemini models, verifies users with
-Auth0, and persists every conversation to PostgreSQL. The backend is containerized
-and runs on Google Cloud Run.
+Lynx is a full-stack, streaming AI chat application. A Next.js frontend (and a
+native SwiftUI iOS app) talk to a Hono API that streams responses from Google's
+Gemini models, verifies users with Auth0, and persists every conversation to
+PostgreSQL. The backend is containerized and runs on Google Cloud Run.
 
 The design: managed Postgres, a modular monolith,
 and complexity deferred until a measurement demands it.
@@ -39,6 +41,7 @@ and complexity deferred until a measurement demands it.
 - 🏷️ **Auto-generated titles** — first exchange names the conversation
 - 📊 **LLM observability** — request tracing and hosted prompt management via Langfuse
 - ☁️ **Cloud-native** — containerized backend on Cloud Run, secrets in Secret Manager
+- 📱 **Native iOS app** — SwiftUI client with its own Auth0 (PKCE) login, streaming chat, and conversation list
 
 ## Architecture
 
@@ -62,6 +65,7 @@ the client ever lives only in memory.
 | Layer | Technology |
 |---|---|
 | **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui |
+| **iOS** | Swift, SwiftUI, Auth0.swift (native PKCE) |
 | **Backend** | Node.js, TypeScript, Hono 4 |
 | **Database** | PostgreSQL (Cloud SQL), `pg`, ULID message IDs |
 | **LLM** | Google Gemini (`@google/genai`) |
@@ -81,11 +85,17 @@ the client ever lives only in memory.
 │   │   └── db/              # Connection pool + data access (users, conversations, messages)
 │   ├── migration/           # SQL migrations
 │   └── Dockerfile           # Multi-stage build for Cloud Run
-└── lynx/                    # Next.js frontend
-    └── src/
-        ├── app/             # Routes, layout, auth token endpoint
-        ├── components/ui/   # Chat app, sidebar, message thread, input
-        └── lib/             # Auth0 client + utilities
+├── lynx/                    # Next.js frontend
+│   └── src/
+│       ├── app/             # Routes, layout, auth token endpoint
+│       ├── components/ui/   # Chat app, sidebar, message thread, input
+│       └── lib/             # Auth0 client + utilities
+└── Lynx-IOS/                # Native SwiftUI iOS app
+    └── Lynx-IOS/
+        ├── App/             # Root view, theming, error banner
+        ├── Auth/            # Native Auth0 (PKCE) login store
+        ├── Features/        # Login, conversation list, chat screens
+        └── Networking/      # API client, SSE parsing, app config
 ```
 
 ## Getting Started
@@ -151,6 +161,18 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and sign in.
+
+### 3. iOS App
+
+```bash
+open Lynx-IOS/Lynx-IOS.xcodeproj
+```
+
+The iOS app uses its own **native** Auth0 application (PKCE, no client secret) —
+see [`Lynx-IOS/README-AUTH0-SETUP.md`](Lynx-IOS/README-AUTH0-SETUP.md) for the
+one-time Auth0 dashboard setup and `Auth0.plist` configuration. In Debug builds
+it points at `http://localhost:8080`; on a physical device, point `AppConfig` at
+your Mac's LAN IP or the deployed Cloud Run URL.
 
 ## API
 
