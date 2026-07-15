@@ -6,6 +6,7 @@ import {
   MessageSquare,
   Settings,
   ChevronRight,
+  Trash2,
   X,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ interface ChatSidebarProps {
   activeId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  onDelete: (id: string) => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
   user?: UserProfile;
@@ -60,6 +62,7 @@ export function ChatSidebar({
   activeId,
   onSelect,
   onNew,
+  onDelete,
   mobileOpen,
   onMobileClose,
   user,
@@ -179,6 +182,33 @@ export function ChatSidebar({
                           {conv.preview}
                         </p>
                       </div>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm("Delete this conversation?")) {
+                            onDelete(conv.id);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (window.confirm("Delete this conversation?")) {
+                              onDelete(conv.id);
+                            }
+                          }
+                        }}
+                        className={cn(
+                          "flex-shrink-0 p-1 rounded opacity-0 group-hover:opacity-100",
+                          "text-stone-700 hover:text-red-400 hover:bg-stone-800/60",
+                          "transition-all cursor-pointer"
+                        )}
+                        aria-label="Delete conversation"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </span>
                       <ChevronRight
                         className={cn(
                           "w-3 h-3 flex-shrink-0 mt-0.5 transition-opacity",
