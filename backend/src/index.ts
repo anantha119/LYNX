@@ -13,6 +13,7 @@ import {
   listConversations,
   getConversation,
   updateTitle,
+  softDeleteConversation,
 } from "./db/conversations.js";
 import {
   insertUserMessage,
@@ -58,6 +59,18 @@ app.post("/v1/conversations", async (c) => {
   const userId = c.get("userId");
   const conv = await createConversation(userId, CHAT_MODEL);
   return c.json(conv, 201);
+});
+
+/* ── DELETE /v1/conversations/:id ────────────────────────────────────────────
+   Soft-deletes a conversation (sets deleted_at). Idempotent: deleting an
+   already-deleted or missing conversation returns 404.
+─────────────────────────────────────────────────────────────────────────── */
+app.delete("/v1/conversations/:id", async (c) => {
+  const userId = c.get("userId");
+  const id = c.req.param("id");
+  const deleted = await softDeleteConversation(userId, id);
+  if (!deleted) return c.json({ error: "not found" }, 404);
+  return c.body(null, 204);
 });
 
 /* ── GET /v1/conversations/:id/messages ──────────────────────────────────────

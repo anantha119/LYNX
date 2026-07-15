@@ -86,6 +86,13 @@ async function apiGetMessages(
   };
 }
 
+async function apiDeleteConversation(id: string, token: string): Promise<void> {
+  await fetch(`${API}/v1/conversations/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+}
+
 async function apiCreateConversation(token: string): Promise<Conversation> {
   const res = await fetch(`${API}/v1/conversations`, {
     method: "POST",
@@ -264,6 +271,34 @@ export function ChatApp() {
     setMobileOpen(false);
   }, []);
 
+  /* ── Delete conversation ──────────────────────────────────────────────── */
+  const handleDelete = useCallback(
+    async (id: string) => {
+      // Optimistically remove from the sidebar and clear its cached messages.
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      setMessages((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+      setPageInfo((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+      if (activeId === id) setActiveId(null);
+
+      try {
+        await apiDeleteConversation(id, accessToken);
+      } catch (err) {
+        console.error("failed to delete conversation:", err);
+        // Re-sync with the server in case the optimistic removal was wrong.
+        apiListConversations(accessToken).then(setConversations).catch(() => {});
+      }
+    },
+    [activeId, accessToken]
+  );
+
   /* ── Select conversation — load its messages from the backend ────────── */
   const handleSelect = useCallback(
     (id: string) => {
@@ -320,6 +355,7 @@ export function ChatApp() {
         activeId={activeId}
         onSelect={handleSelect}
         onNew={handleNew}
+        onDelete={handleDelete}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
         user={user || undefined}

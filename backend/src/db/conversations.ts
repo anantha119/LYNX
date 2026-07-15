@@ -53,6 +53,20 @@ export async function getConversation(
   return r.rows[0] ?? null;
 }
 
+/** Soft-delete a conversation (scoped to its owner). Returns true if a row was affected. */
+export async function softDeleteConversation(
+  userId: string,
+  id: string
+): Promise<boolean> {
+  const r = await query(
+    `UPDATE conversations
+     SET deleted_at = now()
+     WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
+    [id, userId]
+  );
+  return (r.rowCount ?? 0) > 0;
+}
+
 /** Set a conversation's title (used by auto-title generation). */
 export async function updateTitle(
   userId: string,
